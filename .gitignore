@@ -1,0 +1,16 @@
+# Output generato dal build (rigenerabile con `python3 build.py`)
+dist/
+
+# File dati del singolo cliente (si parte da content.example.json)
+content.json
+
+# macOS / editor
+.DS_Store
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+
+# Tooling locale (anteprima dev / agent) — non fa parte del sito pubblicato
+.claude/

@@ -1,0 +1,2111 @@
+/* ===================================================================
+   Your Apartment Catania — Guest Book
+   Titles: Playfair Display (serif) · Accents: Sacramento (script)
+   Body: Poppins (sans) · Palette: warm off-white + ink + cream
+   =================================================================== */
+
+:root {
+    color-scheme: light dark;
+
+    /* =================================================================
+       PUBLIC BRAND API — change these values to re-skin the guidebook.
+       (Load the matching webfonts in the <head> of index.html.)
+       ================================================================= */
+
+    /* --- Typography -------------------------------------------------- */
+    --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+    --font-body:
+        "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+        sans-serif;
+    --font-accent: "Sacramento", "Segoe Script", cursive;
+
+    /* --- Brand palette ----------------------------------------------- */
+    --brand-primary: #201b15; /* CTAs, banners, medal, host badge */
+    --brand-on-primary: #fdfbf7; /* readable fg on --brand-primary    */
+    --brand-footer-bg: #15110b; /* always-dark strip at page bottom  */
+
+    /* --- Surface palette --------------------------------------------- */
+    --paper: #fdfbf7; /* page background                   */
+    --ink: #201b15; /* primary text                      */
+    --ink-soft: #5d554a; /* secondary text                    */
+    --muted: #a39a8a; /* tertiary text, labels             */
+    --cream: #f2eae0; /* card / panel background           */
+
+    /* --- Corner radii ------------------------------------------------ */
+    --radius-sm: 12px; /* accordion, small buttons          */
+    --radius-md: 14px; /* CTA, avatar, collage images       */
+    --radius-lg: 16px; /* standard cards                    */
+    --radius-xl: 22px; /* premium cards (wifi, host-card)   */
+    --radius-pill: 999px; /* pills, chips                      */
+
+    /* =================================================================
+       INTERNAL TOKENS — implementation details. Rarely changed; bigger
+       structural rework needed if you tweak these.
+       ================================================================= */
+
+    /* Legacy font aliases — existing rules reference these names */
+    --serif: var(--font-display);
+    --sans: var(--font-body);
+    --script: var(--font-accent);
+
+    /* Legacy radius alias for content images (was 18px, now standard 16) */
+    --radius: var(--radius-lg);
+
+    /* Internal surface tones */
+    --bg: #e7ded0; /* page backdrop on wide screens     */
+    --cream-2: #ece2d4;
+    --line: #ece4d7;
+    --line-2: #e2d8c8;
+    --white: #ffffff; /* elevated white surface            */
+
+    /* Layout */
+    --maxw: 480px;
+    --pad: 24px;
+    --shadow:
+        0 1px 2px rgba(40, 32, 20, 0.04), 0 14px 40px rgba(60, 48, 30, 0.07);
+    --topbar-h: 58px;
+}
+
+/* ===== Dark mode tokens (translucent topbar/sec-nav rules at end) ===== */
+@media all {
+    :root {
+        /* brand inverts: a warm cream becomes the accent, dark becomes fg */
+        --brand-primary: #f1ead9;
+        --brand-on-primary: #15110b;
+
+        /* surfaces */
+        --paper: #15110b;
+        --bg: #0a0805;
+        --ink: #f1ead9;
+        --ink-soft: #c5b9a1;
+        --muted: #807665;
+        --cream: #1d1810;
+        --cream-2: #271f15;
+        --line: #2c2418;
+        --line-2: #3a3022;
+        --white: #1f1a12;
+    }
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.72;
+    color: var(--ink-soft);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    display: flex;
+    justify-content: center;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ---------- App shell (phone-like on desktop) ---------- */
+#app {
+    position: relative;
+    width: 100%;
+    max-width: var(--maxw);
+    min-height: 100dvh;
+    background: var(--paper);
+    box-shadow: 0 0 70px rgba(50, 38, 22, 0.14);
+    overflow-x: clip; /* clip horizontal only; keeps window as scroll root so sticky works */
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+}
+
+/* ---------- Icons ---------- */
+.ico {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    vertical-align: middle;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.ico--fill {
+    fill: currentColor;
+    stroke: none;
+}
+
+/* ---------- Topbar (injected by JS) ---------- */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: calc(var(--topbar-h) + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 14px 0;
+    background: rgba(253, 251, 247, 0.82);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid var(--line);
+}
+.tb-back {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font-size: 21px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition: background 0.2s;
+}
+.tb-back:active {
+    background: var(--cream-2);
+}
+.tb-title {
+    flex: 1;
+    text-align: center;
+    font-family: var(--serif);
+    font-size: 1.12rem;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tb-spacer {
+    width: 40px;
+    flex: none;
+}
+
+/* ---------- Screens ---------- */
+.screen {
+    display: none;
+}
+.screen.is-active {
+    display: block;
+}
+@keyframes screen-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+.anim .screen.is-active {
+    animation: screen-in 0.44s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.page {
+    padding: 30px var(--pad) calc(56px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Typography helpers ---------- */
+.eyebrow {
+    font-family: var(--sans);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-size: 0.7rem;
+    color: var(--muted);
+}
+.eyebrow.center {
+    text-align: center;
+}
+.section-eyebrow {
+    text-align: center;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 18px;
+}
+.script {
+    font-family: var(--script);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1;
+}
+
+.page-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    color: var(--ink);
+    font-size: clamp(2.05rem, 8.5vw, 2.55rem);
+    line-height: 1.08;
+    letter-spacing: 0.005em;
+}
+.page-title.center {
+    text-align: center;
+}
+.page-title.center::after {
+    content: "";
+    display: block;
+    width: 34px;
+    height: 1px;
+    background: var(--line-2);
+    margin: 18px auto 26px;
+}
+.page-title .amp {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.78em;
+}
+.script-lead {
+    display: inline-block;
+    font-size: 1.7em;
+    line-height: 0.7;
+    color: var(--ink);
+}
+
+.sub {
+    font-family: var(--serif);
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 1.32rem;
+    margin: 34px 0 16px;
+    letter-spacing: 0.01em;
+}
+.sub:first-of-type {
+    margin-top: 8px;
+}
+
+.lead {
+    font-size: 1.06rem;
+    color: var(--ink);
+    font-weight: 400;
+    margin-bottom: 14px;
+}
+.lead.center {
+    text-align: center;
+}
+.page p {
+    margin-bottom: 14px;
+}
+.page p:last-child {
+    margin-bottom: 0;
+}
+.note {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 18px;
+}
+.note.center {
+    text-align: center;
+}
+em {
+    font-style: normal;
+    color: var(--ink);
+}
+
+.rounded {
+    border-radius: var(--radius);
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+.full-img {
+    width: 100%;
+    margin: 6px 0 24px;
+    aspect-ratio: 3/2;
+    object-fit: cover;
+}
+#host .full-img,
+#kitchen .full-img {
+    aspect-ratio: 4/5;
+    max-height: 440px;
+}
+
+/* =================================================================
+   HOME
+   ================================================================= */
+.hero {
+    min-height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(38px + env(safe-area-inset-top)) var(--pad) 4px;
+    text-align: center;
+}
+/* On wide viewports (desktop preview, tablet landscape) the app is a
+   centered phone-frame, but 90dvh still resolves to the FULL window
+   height — that makes the collage stretch unnaturally tall. Cap it. */
+@media (min-width: 540px) {
+    .hero {
+        min-height: min(90dvh, 760px);
+    }
+}
+.hero .eyebrow {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.34em;
+    font-size: 0.82rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+}
+.hero-title {
+    font-size: clamp(2.7rem, 13vw, 3.6rem);
+    margin-bottom: 22px;
+}
+.hero-logo {
+    margin: 4px auto 22px;
+    line-height: 0;
+}
+/* <picture> wrappers exist only to deliver WebP with a JPG fallback — they
+   should NEVER add a layout box themselves. Each <img> inside them stays the
+   visible element. Targeted overrides below restore block/flex where needed
+   (e.g. .gallery-item, .hero-logo picture).
+   The <source> children must also be removed from the layout — with
+   display: contents on the parent they would otherwise be promoted to grid /
+   flex items themselves and break the surrounding layout. */
+picture {
+    display: contents;
+}
+picture > source {
+    display: none;
+}
+.hero-logo picture,
+.hero-logo img {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.collage {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    flex: 1 1 0; /* basis 0 so the collage doesn't push the hero past 90dvh — it only grows into the remaining space */
+    min-height: 220px;
+    /* Breathing room before "Enjoy your stay" — scales with viewport height
+       so it stays generous on tall phones / tablets and never collapses
+       on shorter screens. */
+    margin-bottom: clamp(72px, 12dvh, 140px);
+}
+.collage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    min-width: 0;
+    min-height: 0;
+}
+.collage .tall {
+    grid-row: 1 / span 2;
+    object-position: 50% 32%;
+}
+
+.hero-tagline {
+    font-size: clamp(2.1rem, 9.5vw, 2.7rem);
+    margin-top: clamp(12px, 2dvh, 28px);
+}
+.hero-address {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 18px;
+    margin-top: 14px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    background: var(--white);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink);
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        transform 0.15s;
+}
+.hero-address .ico {
+    width: 15px;
+    height: 15px;
+    color: var(--ink);
+}
+.hero-address .chev {
+    width: 13px;
+    height: 13px;
+    color: var(--muted);
+    margin-left: 1px;
+}
+.hero-address:active {
+    transform: scale(0.985);
+}
+@media (hover: hover) {
+    .hero-address:hover {
+        border-color: var(--ink-soft);
+        box-shadow: 0 6px 16px rgba(60, 48, 30, 0.08);
+    }
+}
+
+/* Menu */
+.menu {
+    margin: 26px 0 8px;
+    padding: 34px var(--pad) 36px;
+    background: var(--cream);
+    border-top: 1px solid var(--line-2);
+    border-bottom: 1px solid var(--line-2);
+}
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px 10px;
+}
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    color: var(--ink);
+}
+.menu-ico {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    transition: transform 0.25s ease;
+}
+.menu-ico .ico {
+    width: 42px;
+    height: 42px;
+    stroke-width: 1.15;
+}
+.menu-item span:last-child {
+    font-size: 0.78rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--ink-soft);
+}
+.menu-item:active .menu-ico {
+    transform: translateY(-3px) scale(1.06);
+}
+@media (hover: hover) {
+    .menu-item:hover .menu-ico {
+        transform: translateY(-3px) scale(1.06);
+    }
+}
+
+/* Map card — 4:3 preview of the apartment address, tap to open in native Maps.
+   The block is banded with a darker tan so it stands apart from the host card
+   above and the contact footer below — similar to how .menu breaks up the page. */
+.map-block {
+    margin-top: 24px;
+    padding: 34px var(--pad) 30px;
+    background: var(--cream-2);
+    border-top: 1px solid var(--line-2);
+    border-bottom: 1px solid var(--line-2);
+}
+.map-block .section-eyebrow {
+    margin-bottom: 14px;
+}
+.map-card {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    max-width: 540px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    color: inherit;
+    text-decoration: none;
+    transition: transform 120ms ease;
+}
+.map-card-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    pointer-events: none;
+    background: var(--cream-2); /* placeholder shade while tiles load */
+    /* Contain Leaflet's internal z-indexes (panes go up to 1000) so they
+       can't escape this box and bury the .map-card-overlay pill below. */
+    isolation: isolate;
+}
+/* Leaflet — strip the focus outline and default font so it inherits ours */
+.map-card-frame.leaflet-container {
+    background: var(--cream-2);
+    font: inherit;
+    outline: none;
+}
+.map-card-frame .leaflet-control-attribution {
+    display: none; /* we credit CARTO + OSM below the card instead */
+}
+/* Lift the Dark Matter tiles a notch — same recipe as the Malta site:
+   brighter, gentler contrast, slightly more saturated. Scoped to .leaflet-tile
+   so the red marker pin is not affected. */
+.map-card-frame .leaflet-tile {
+    filter: brightness(1.9) contrast(0.88) saturate(1.12);
+}
+/* Custom Apple-Maps-style teardrop pin */
+.map-pin {
+    background: transparent !important;
+    border: 0 !important;
+    filter: drop-shadow(0 3px 6px rgba(20, 16, 10, 0.35));
+}
+.map-pin svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.map-card-overlay {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 1; /* sit above the Leaflet container */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #201b15; /* lock to dark text — the pill stays light in light mode */
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(60, 48, 30, 0.15);
+}
+.map-card-addr {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: inherit;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.map-card-addr .ico {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+.map-card-cta {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: rgba(32, 27, 21, 0.55);
+}
+.map-card-cta .ico {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+.map-card:active {
+    transform: scale(0.99);
+}
+.map-card:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 3px;
+}
+.map-attribution {
+    max-width: 540px;
+    margin: 8px auto 0;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+.map-attribution a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 0, 0, 0.2);
+    text-underline-offset: 2px;
+}
+
+/* Host card (Airbnb-inspired) */
+.host-block {
+    padding: 32px var(--pad) 8px;
+}
+.host-block .section-eyebrow {
+    margin-bottom: 14px;
+}
+.host-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 26px 22px 20px;
+    background: var(--white);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+    max-width: 380px;
+    margin: 0 auto;
+}
+.hc-avatar {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 13px;
+}
+.hc-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 40%;
+    border: 3px solid var(--white);
+    box-shadow: 0 6px 16px rgba(60, 48, 30, 0.18);
+    display: block;
+}
+.hc-medal {
+    position: absolute;
+    right: -1px;
+    bottom: 2px;
+    width: 33px;
+    height: 33px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    display: grid;
+    place-items: center;
+    border: 2.5px solid var(--white);
+}
+.hc-medal .ico {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.6;
+}
+.hc-name {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.62rem;
+    line-height: 1.05;
+}
+.hc-role {
+    margin-top: 5px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+}
+.hc-stats {
+    display: flex;
+    align-self: stretch;
+    margin: 18px 0 4px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+.hc-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 14px 6px;
+}
+.hc-stat + .hc-stat {
+    border-left: 1px solid var(--line);
+}
+.hc-num {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.46rem;
+    line-height: 1;
+    color: var(--ink);
+}
+.hc-plus {
+    font-size: 0.6em;
+    color: var(--muted);
+    vertical-align: top;
+    margin-left: 1px;
+}
+.hc-lab {
+    font-size: 0.61rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+}
+.hc-quote {
+    font-family: var(--serif);
+    font-style: normal;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 16px 2px 18px;
+}
+.hc-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    align-self: stretch;
+    padding: 13px;
+    border: 1.5px solid var(--brand-primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--brand-primary);
+    transition:
+        background 0.22s ease,
+        color 0.22s ease;
+}
+.hc-cta .ico {
+    width: 14px;
+    height: 14px;
+}
+.host-card:active .hc-cta {
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+}
+@media (hover: hover) {
+    .host-card:hover .hc-cta {
+        background: var(--brand-primary);
+        color: var(--brand-on-primary);
+    }
+}
+
+/* Host page meta (Superhost pill + stats) */
+.host-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    margin: -2px 0 24px;
+}
+.superhost-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 16px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    background: var(--cream);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink);
+}
+.superhost-pill .ico {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.6;
+}
+.host-meta-stats {
+    font-size: 0.84rem;
+    color: var(--muted);
+}
+.host-meta-stats b {
+    font-family: var(--serif);
+    font-weight: 600;
+    color: var(--ink);
+}
+
+/* Footer */
+.home-footer {
+    text-align: center;
+    padding: 2rem var(--pad) calc(40px + env(safe-area-inset-bottom));
+}
+.home-footer-script {
+    font-size: 2.4rem;
+    margin-bottom: 18px;
+}
+.contact-row {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.contact-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 20px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    color: var(--ink);
+    background: var(--white);
+    min-width: 230px;
+    justify-content: center;
+    transition:
+        background 0.2s,
+        border-color 0.2s;
+}
+.contact-pill .ico {
+    width: 17px;
+    height: 17px;
+}
+.contact-pill:active {
+    background: var(--cream);
+}
+.reviews-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line-2);
+}
+.reviews-link .ico {
+    width: 15px;
+    height: 15px;
+    color: var(--ink);
+}
+.footer-addr {
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-top: 22px;
+    letter-spacing: 0.02em;
+}
+
+/* =================================================================
+   GENERIC CONTENT BLOCKS
+   ================================================================= */
+
+/* Check-in / Check-out summary cards */
+.io-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.io-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 22px 12px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.io-ico {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--white);
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    margin-bottom: 13px;
+}
+.io-ico .ico {
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.5;
+}
+.io-label {
+    font-size: 0.64rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+}
+.io-when {
+    font-size: 0.74rem;
+    font-style: normal;
+    color: var(--muted);
+    margin-top: 9px;
+    line-height: 1;
+}
+.io-time {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-top: 2px;
+}
+.io-details {
+    margin-top: 30px;
+}
+.io-details > li:first-child {
+    padding-top: 6px;
+}
+.io-checklist {
+    margin-top: 11px;
+}
+/* nested checklist must not inherit .info-list li dividers/padding */
+.io-details .checklist li {
+    padding: 0;
+    border: none;
+}
+
+/* info-list */
+.info-list {
+    list-style: none;
+}
+.info-list li {
+    display: flex;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+}
+.info-list li:last-child {
+    border-bottom: none;
+}
+.li-ico {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--cream);
+    color: var(--ink);
+}
+.li-ico .ico {
+    width: 23px;
+    height: 23px;
+    stroke-width: 1.5;
+}
+.info-list h3,
+.emg h3,
+.tcard h3,
+.callout h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.12rem;
+    color: var(--ink);
+    margin-bottom: 3px;
+    line-height: 1.25;
+}
+.info-list p,
+.emg p,
+.tcard p,
+.callout p {
+    font-size: 0.92rem;
+    margin-bottom: 0;
+}
+.inline-tel {
+    color: var(--ink);
+    border-bottom: 1px solid var(--line-2);
+}
+.inline-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+.inline-action .ico {
+    width: 15px;
+    height: 15px;
+    color: var(--ink);
+    flex: none;
+}
+.inline-action .txt {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1.5px solid var(--ink);
+    padding-bottom: 2px;
+}
+.inline-action:active {
+    opacity: 0.6;
+}
+@media (hover: hover) {
+    .inline-action:hover .txt {
+        opacity: 0.65;
+    }
+}
+
+/* wifi */
+.wifi-qr-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 26px 24px;
+    margin: 6px 0 12px;
+    box-shadow: var(--shadow);
+}
+.wifi-qr {
+    width: 172px;
+    height: 172px;
+    display: grid;
+    place-items: center;
+}
+.wifi-qr img,
+.wifi-qr canvas {
+    width: 172px !important;
+    height: 172px !important;
+    display: block;
+    image-rendering: pixelated;
+}
+.wifi-qr-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    font-weight: 500;
+}
+.wifi-card {
+    background: var(--cream);
+    border-radius: var(--radius-xl);
+    padding: 8px 22px;
+    margin: 6px 0;
+}
+.wifi-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 0;
+}
+.wifi-ico {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--white);
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+}
+.wifi-ico .ico {
+    width: 24px;
+    height: 24px;
+}
+.wifi-row > div {
+    flex: 1;
+    min-width: 0;
+}
+.wifi-value {
+    font-family: var(--serif);
+    font-size: 1.24rem;
+    color: var(--ink);
+    font-weight: 500;
+    margin-top: 1px;
+    line-height: 1.2;
+}
+#wifi-pass {
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+}
+.hr {
+    height: 1px;
+    background: var(--line-2);
+}
+.copy-btn {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    border: none;
+    cursor: pointer;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    font-family: var(--sans);
+    transition: transform 0.15s;
+}
+.copy-btn .ico {
+    width: 18px;
+    height: 18px;
+}
+.copy-btn .ico-done {
+    display: none;
+}
+.copy-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.copy-btn:active {
+    transform: scale(0.94);
+}
+.copy-btn.copied .ico-copy {
+    display: none;
+}
+.copy-btn.copied .ico-done {
+    display: inline-block;
+}
+
+/* rules */
+.duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.duo img {
+    aspect-ratio: 1;
+    width: 100%;
+}
+.rules {
+    list-style: none;
+}
+.rules li {
+    position: relative;
+    padding: 13px 0 13px 30px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 0.98rem;
+}
+.rules li:last-child {
+    border-bottom: none;
+}
+.rules li::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 21px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-primary);
+}
+.banner {
+    margin-top: 24px;
+    padding: 22px 24px;
+    border-radius: var(--radius);
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    text-align: center;
+    font-family: var(--serif);
+    font-style: normal;
+    font-size: 1.04rem;
+    line-height: 1.5;
+}
+
+/* emergency */
+.emg-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.emg {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+}
+.emg-tel {
+    display: inline-block;
+    font-size: 1.04rem;
+    color: var(--ink);
+    font-weight: 500;
+    border-bottom: 1px solid var(--line-2);
+    margin: 1px 0 3px;
+}
+.emg-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    margin-bottom: 16px;
+}
+.emg-hero-label {
+    display: block;
+    font-size: 0.64rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.72;
+    margin-bottom: 3px;
+}
+.emg-hero-num {
+    font-family: var(--serif);
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 1;
+}
+.emg-hero-ico {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(253, 251, 247, 0.16);
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+.emg-hero-ico .ico {
+    width: 22px;
+    height: 22px;
+}
+.emg-hero:active {
+    opacity: 0.92;
+}
+.emg a.addr {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin-top: 7px;
+}
+.emg a.addr .pin {
+    width: 13px;
+    height: 13px;
+    color: var(--muted);
+    flex: none;
+}
+.emg a.addr .chev {
+    width: 14px;
+    height: 14px;
+    color: var(--muted);
+    margin-left: auto;
+    flex: none;
+}
+.emg a.addr:active {
+    color: var(--ink);
+}
+@media (hover: hover) {
+    .emg a.addr:hover {
+        color: var(--ink);
+    }
+}
+.callout {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 14px;
+    padding: 18px;
+    border: 1px dashed var(--line-2);
+    border-radius: var(--radius-lg);
+}
+
+/* stack cards (things to do / eat / nearest) */
+.stack-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.tcard {
+    display: flex;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(60, 48, 30, 0.04);
+}
+.tcard-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+    background: var(--cream);
+}
+.tcard-body {
+    padding: 17px 19px 19px;
+}
+.tcard-cat {
+    display: block;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.tcard h3 {
+    margin-bottom: 6px;
+}
+.tcard p {
+    line-height: 1.6;
+}
+
+/* Featured "hosted" card — Sailing with Dario */
+.tcard--host {
+    border-color: var(--line-2);
+    box-shadow:
+        0 6px 22px rgba(60, 48, 30, 0.09),
+        0 1px 2px rgba(60, 48, 30, 0.04);
+}
+.tcard-imgwrap {
+    position: relative;
+}
+.tcard-host-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 13px 5px 5px;
+    background: rgba(20, 16, 11, 0.86);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-pill);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f1ead9;
+}
+.tcard-host-badge img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 22%;
+    flex: none;
+}
+
+/* Your Nearest — location cards with directions */
+.near-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.near-card {
+    display: block;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 16px 17px 13px;
+    box-shadow: 0 4px 14px rgba(60, 48, 30, 0.04);
+    color: var(--ink);
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s,
+        transform 0.15s;
+}
+.near-head {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+.near-ico {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--cream);
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+}
+.near-ico .ico {
+    width: 22px;
+    height: 22px;
+    stroke-width: 1.5;
+}
+.near-info {
+    flex: 1;
+    min-width: 0;
+}
+.near-cat {
+    display: block;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    font-weight: 500;
+}
+.near-name {
+    display: block;
+    font-family: var(--serif);
+    font-size: 1.16rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-top: 1px;
+}
+.near-walk {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--cream);
+    border-radius: var(--radius-pill);
+    padding: 6px 11px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+}
+.near-walk .ico {
+    width: 14px;
+    height: 14px;
+}
+.near-desc {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 11px 0 0;
+    line-height: 1.6;
+}
+.near-dir {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top: 1px solid var(--line);
+    font-size: 0.71rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+}
+.near-dir-l {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.near-dir .ico {
+    width: 15px;
+    height: 15px;
+    flex: none;
+}
+.near-dir-l .ico {
+    color: var(--muted);
+}
+.near-dir.is-addr {
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-weight: 500;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+}
+
+/* Sticky section nav (Things to do) */
+.sec-nav {
+    position: sticky;
+    top: calc(var(--topbar-h) + env(safe-area-inset-top));
+    z-index: 30;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 11px var(--pad);
+    margin: 4px calc(-1 * var(--pad)) 14px;
+    background: rgba(253, 251, 247, 0.92);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+.sec-nav::-webkit-scrollbar {
+    display: none;
+}
+.sec-chip {
+    flex: none;
+    border: 1px solid var(--line-2);
+    background: var(--white);
+    color: var(--ink-soft);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        color 0.2s,
+        border-color 0.2s;
+}
+.sec-chip.is-active {
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    border-color: var(--ink);
+}
+.ttd-sec {
+    scroll-margin-top: 120px;
+}
+.ttd-sec .sub {
+    margin-top: 8px;
+}
+.near-card:active {
+    transform: scale(0.992);
+    box-shadow: 0 2px 8px rgba(60, 48, 30, 0.08);
+}
+@media (hover: hover) {
+    .near-card:hover {
+        border-color: var(--line-2);
+        box-shadow: 0 10px 24px rgba(60, 48, 30, 0.1);
+    }
+}
+
+/* tips */
+.tips {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.tips li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+.tips li:last-child {
+    border-bottom: none;
+}
+.tips .num {
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: var(--cream-2);
+    line-height: 1;
+    flex: none;
+    width: 42px;
+    -webkit-text-stroke: 0.5px var(--line-2);
+}
+.tips p {
+    margin: 4px 0 0;
+    font-size: 0.95rem;
+}
+
+/* checklist */
+.checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-bottom: 10px;
+}
+.checklist li {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: 0.97rem;
+    color: var(--ink);
+}
+.cl-ico {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--cream);
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+}
+.cl-ico .ico {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2;
+}
+
+/* amenity grid (Kitchen) */
+.amenity-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px 14px;
+    margin: 4px 0 2px;
+}
+.amenity-grid li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.94rem;
+    color: var(--ink);
+}
+.amenity-grid .ck {
+    flex: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: var(--cream);
+    display: grid;
+    place-items: center;
+}
+.amenity-grid .ck .ico {
+    width: 13px;
+    height: 13px;
+    stroke-width: 2;
+    color: var(--ink);
+}
+
+/* accordion */
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.accordion details {
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+.accordion summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 17px 20px;
+    font-family: var(--serif);
+    font-size: 1.04rem;
+    color: var(--ink);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    line-height: 1.3;
+}
+.accordion summary::-webkit-details-marker {
+    display: none;
+}
+.accordion .chev {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    color: var(--muted);
+    transform: rotate(90deg);
+    transition: transform 0.25s;
+}
+.accordion details[open] .chev {
+    transform: rotate(-90deg);
+}
+.accordion p {
+    padding: 0 20px 18px;
+    font-size: 0.93rem;
+    margin: 0;
+}
+
+/* reviews */
+.review {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin-bottom: 14px;
+}
+.review .score {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--ink);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.review .score .ico {
+    width: 18px;
+    height: 18px;
+    color: var(--ink);
+}
+.review p {
+    font-style: normal;
+    color: var(--ink-soft);
+    margin: 0;
+}
+
+/* host page extras */
+.quote {
+    font-family: var(--serif);
+    font-size: 1.06rem;
+    font-style: normal;
+    line-height: 1.65;
+    color: var(--ink);
+    margin: 24px 0;
+    padding-left: 18px;
+    border-left: 2px solid var(--line-2);
+}
+.contact-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0 8px;
+}
+.contact-line {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: var(--ink);
+}
+.ci {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--white);
+    display: grid;
+    place-items: center;
+}
+.ci .ico {
+    width: 19px;
+    height: 19px;
+}
+
+.closing {
+    text-align: center;
+    font-size: 2.3rem;
+    margin: 30px 0 4px;
+}
+
+/* CTAs */
+.cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 40px;
+    margin-bottom: 12px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition:
+        transform 0.15s,
+        opacity 0.2s;
+}
+.cta .ico {
+    width: 18px;
+    height: 18px;
+}
+.cta:active {
+    transform: scale(0.985);
+    opacity: 0.92;
+}
+/* tighten the gap when two CTAs stack (e.g. Before You Go) */
+.cta + .cta {
+    margin-top: 14px;
+}
+
+/* ---------- Desktop framing ---------- */
+@media (min-width: 540px) {
+    body {
+        background: radial-gradient(
+            140% 120% at 50% 0%,
+            #efe7d9 0%,
+            var(--bg) 70%
+        );
+    }
+    #app {
+        border-left: 1px solid var(--line-2);
+        border-right: 1px solid var(--line-2);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .anim .screen.is-active {
+        animation: none;
+    }
+    * {
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ===== Brand footer (logo strip at the end of every screen) =====
+   Always uses the dark colourway, regardless of the OS color scheme. */
+.brand-footer {
+    background: var(--brand-footer-bg);
+    padding: 30px var(--pad) calc(30px + env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: center;
+    /* subtle hairline so the strip stays distinguishable in dark mode */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+.brand-logo {
+    display: block;
+    width: 100%;
+    max-width: 170px;
+    height: auto;
+}
+
+/* ===== Dark mode — overrides for hardcoded colors (kept at end of file
+   so they win the cascade against the base .topbar / .sec-nav / body rules) ===== */
+@media all {
+    .topbar {
+        background: rgba(21, 17, 11, 0.78);
+    }
+    .sec-nav {
+        background: rgba(21, 17, 11, 0.88);
+    }
+    /* Dark map tiles (CARTO Dark Matter) are picked up in JS via prefers-color-scheme,
+       so no filter is needed here — only theme the surrounding chrome. */
+    .map-card-frame,
+    .map-card-frame.leaflet-container {
+        background: var(--cream-2);
+    }
+    /* Address pill: dark glass + light text, readable on the dark map. */
+    .map-card-overlay {
+        background: rgba(20, 16, 10, 0.72);
+        color: #f1ead9;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+    .map-card-cta {
+        color: rgba(241, 234, 217, 0.6);
+    }
+    .map-attribution a {
+        text-decoration-color: rgba(255, 255, 255, 0.2);
+    }
+}
+@media (min-width: 540px) {
+    body {
+        background: radial-gradient(
+            140% 120% at 50% 0%,
+            #1a1610 0%,
+            var(--bg) 70%
+        );
+    }
+}
+
+/* ===== Photo gallery — collage trigger + Airbnb-style modal ===== */
+
+/* The collage is now a <button>; reset the UA chrome */
+button.collage {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    width: 100%;
+    position: relative;
+}
+button.collage:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 4px;
+    border-radius: var(--radius-lg);
+}
+
+/* "Show all N photos" badge — overlays the bottom-right tile, Airbnb-style */
+.collage-badge {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: rgba(253, 251, 247, 0.96);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-pill);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.74rem;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 10px rgba(40, 32, 20, 0.18);
+    pointer-events: none; /* the surrounding button captures the tap */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.collage-badge .ico {
+    font-size: 0.9rem;
+    stroke-width: 1.9;
+}
+@media all {
+    .collage-badge {
+        background: rgba(21, 17, 11, 0.92);
+        color: var(--ink);
+    }
+}
+
+/* Modal */
+.gallery-modal {
+    padding: 0;
+    border: 0;
+    width: 100vw;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    overflow: hidden;
+}
+.gallery-modal::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+}
+.gallery-modal[open] {
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: env(safe-area-inset-top) 14px 0;
+    height: calc(56px + env(safe-area-inset-top));
+    background: rgba(253, 251, 247, 0.94);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid var(--line);
+}
+@media all {
+    .gallery-bar {
+        background: rgba(21, 17, 11, 0.94);
+    }
+}
+.gallery-close {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-size: 19px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition: background 0.2s;
+}
+.gallery-close:active {
+    background: var(--cream-2);
+}
+.gallery-counter {
+    flex: 1;
+    text-align: center;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+}
+.gallery-spacer {
+    width: 40px;
+    flex: none;
+}
+
+.gallery-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px calc(28px + env(safe-area-inset-bottom));
+    scroll-snap-type: y proximity;
+    -webkit-overflow-scrolling: touch;
+}
+.gallery-item {
+    display: block;
+    margin-bottom: 14px;
+    scroll-snap-align: start;
+}
+.gallery-item:last-child {
+    margin-bottom: 0;
+}
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+}
+@media (min-width: 720px) {
+    .gallery-list {
+        padding: 20px max(20px, calc((100vw - 1100px) / 2))
+            calc(40px + env(safe-area-inset-bottom));
+    }
+    .gallery-item img {
+        max-height: 80dvh;
+        object-fit: contain;
+        background: var(--cream);
+    }
+}
+
+/* Open/close animation — JS toggles `data-closing` to play the exit */
+@keyframes gallery-in {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+@keyframes gallery-out {
+    from {
+        opacity: 1;
+        transform: none;
+    }
+    to {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+}
+@keyframes gallery-backdrop-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes gallery-backdrop-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+.gallery-modal[open] {
+    animation: gallery-in 0.32s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+.gallery-modal[open]::backdrop {
+    animation: gallery-backdrop-in 0.28s ease-out both;
+}
+.gallery-modal[data-closing] {
+    animation: gallery-out 0.22s ease-in both;
+}
+.gallery-modal[data-closing]::backdrop {
+    animation: gallery-backdrop-out 0.22s ease-in both;
+}
+@media (prefers-reduced-motion: reduce) {
+    .gallery-modal[open],
+    .gallery-modal[open]::backdrop,
+    .gallery-modal[data-closing],
+    .gallery-modal[data-closing]::backdrop {
+        animation: none;
+    }
+}

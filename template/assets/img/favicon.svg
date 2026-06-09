@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Your Apartment Catania">
+    <!-- Brand-dark rounded square -->
+    <rect width="64" height="64" rx="14" fill="#15110b"/>
+    <!-- Etna silhouette + lava plume + sea: lifted from the original logo
+         artwork (commit e9b702f, assets/img/logo-dark.svg) and reworked
+         as filled shapes so the marks stay legible at 16×16. The mountain
+         ridge curve is taken verbatim from the source and closed down to
+         a baseline; the plume and ripples become tight filled forms instead
+         of hairline strokes. -->
+    <g transform="translate(32 40) scale(0.16) translate(-352.5 -503)">
+        <!-- Sea: two stacked wavy bands, each tall enough to read.
+             Top wave-line is the S-curve from the source; the band is then
+             filled down to a flat baseline. -->
+        <path fill="#5698d8" d="M 180 562
+                                 C 215 552 235 583 265 568
+                                 S 305 553 330 568
+                                 S 380 583 410 568
+                                 S 460 553 510 568
+                                 L 510 580
+                                 L 180 580 Z"/>
+        <path fill="#3f80c2" d="M 180 580
+                                 C 215 572 235 600 275 585
+                                 S 320 572 355 585
+                                 S 410 600 440 585
+                                 S 480 572 510 585
+                                 L 510 605
+                                 L 180 605 Z"/>
+        <!-- Mountain silhouette: original ridge from the SVG logo,
+             closed down to y=580 to form a filled triangle. Sits on top
+             of the upper sea band. -->
+        <path fill="#f1ead9" d="M 215 558
+                                 Q 235 552 250 545
+                                 Q 268 530 280 518
+                                 Q 292 528 305 515
+                                 Q 325 490 345 472
+                                 Q 360 460 372 467
+                                 Q 388 478 405 498
+                                 Q 425 525 445 545
+                                 Q 460 553 478 558
+                                 L 478 580 L 215 580 Z"/>
+        <!-- Lava + smoke at the peak: a small red glow + a curled stroke,
+             traced from the historical plume paths. -->
+        <path fill="#ee2323" d="M 358 466
+                                 C 354 454 362 448 363 438
+                                 C 365 432 357 428 360 420
+                                 C 366 426 372 434 369 444
+                                 C 366 452 369 460 365 468
+                                 Z
+                                 M 372 462
+                                 C 374 456 372 450 378 442
+                                 C 381 446 380 452 376 458
+                                 Z"/>
+    </g>
+</svg>

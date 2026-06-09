@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+        {{{ _themeMeta }}}
+        <title>{{ site.businessName }}{{#if site.unitLabel}} · {{ site.unitLabel }}{{/if}}</title>
+        <meta name="description" content="{{ site.description }}" />
+
+        <!-- Open Graph / Twitter (controls the preview when the link is shared) -->
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="{{ site.businessName }}{{#if site.unitLabel}} · {{ site.unitLabel }}{{/if}}" />
+        <meta property="og:title" content="{{ site.businessName }}{{#if site.unitLabel}} · {{ site.unitLabel }}{{/if}}" />
+        <meta property="og:description" content="{{ site.description }}" />
+        <meta property="og:url" content="{{ site.baseUrl }}" />
+        <meta property="og:image" content="{{ site.baseUrl }}assets/img/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="1200" />
+        <meta property="og:image:alt" content="{{ site.businessName }}" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="{{ site.businessName }}{{#if site.unitLabel}} · {{ site.unitLabel }}{{/if}}" />
+        <meta name="twitter:description" content="{{ site.description }}" />
+        <meta name="twitter:image" content="{{ site.baseUrl }}assets/img/og-image.png" />
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="{{#if site.shortName}}{{ site.shortName }}{{else}}{{ site.businessName }}{{/if}}" />
+        <!-- Favicons: the brand mark from the logo, on the brand dark background -->
+        <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
+        <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""
+        />
+        <link rel="stylesheet" href="assets/css/style.css" />
+        <link rel="stylesheet" href="assets/css/brand.css" />
+        {{{ _configScript }}}
+    </head>
+    <body>
+        {{> icons }}
+
+        <div id="app">
+            <!-- ====================== HOME ====================== -->
+            <section class="screen is-active" id="home">
+                <header class="hero">
+                    <p class="eyebrow">Welcome to</p>
+                    <h1 class="hero-title hero-logo">{{{ _heroLogo }}}</h1>
+                    {{#if collage}}
+                    <button
+                        type="button"
+                        class="collage"
+                        data-gallery-open
+                        aria-label="Open the photo gallery ({{ galleryCount }} photos)"
+                    >
+                        {{#each collage}}
+                        <picture>
+                            <source type="image/webp" srcset="{{ webp }}" />
+                            <img{{#if tall}} class="tall"{{/if}} src="{{ src }}" alt="{{ alt }}" />
+                        </picture>
+                        {{/each}}
+                        <span class="collage-badge">
+                            <svg class="ico"><use href="#i-grid" /></svg> Show
+                            all {{ galleryCount }} photos
+                        </span>
+                    </button>
+                    {{/if}}
+                    <p class="hero-tagline script">{{#if site.tagline}}{{ site.tagline }}{{else}}Enjoy your stay!{{/if}}</p>
+                    <a
+                        class="hero-address"
+                        href="{{ address._google }}"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Open the address in your maps app"
+                        ><svg class="ico"><use href="#i-pin" /></svg>
+                        {{ address.text }}
+                        <svg class="ico chev"><use href="#i-chevron" /></svg
+                    ></a>
+                </header>
+
+                <nav class="menu" aria-label="Guest book sections">
+                    <p class="section-eyebrow">Your guide book</p>
+                    <div class="menu-grid">
+                        <a class="menu-item" href="#checkin"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-key" /></svg></span
+                            ><span>Check In/Out</span></a
+                        >
+                        <a class="menu-item" href="#wifi"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-wifi" /></svg></span
+                            ><span>Wifi</span></a
+                        >
+                        <a class="menu-item" href="#houseinfo"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-house" /></svg></span
+                            ><span>House Info</span></a
+                        >
+                        <a class="menu-item" href="#kitchen"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-plate" /></svg></span
+                            ><span>Kitchen &amp; Other Areas</span></a
+                        >
+                        <a class="menu-item" href="#rules"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-rules" /></svg></span
+                            ><span>House Rules</span></a
+                        >
+                        <a class="menu-item" href="#emergency"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-aid" /></svg></span
+                            ><span>Emergency</span></a
+                        >
+                        <a class="menu-item" href="#transport"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-bus" /></svg></span
+                            ><span>Transportation</span></a
+                        >
+                        <a class="menu-item" href="#thingstodo"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-map" /></svg></span
+                            ><span>Things to do</span></a
+                        >
+                        <a class="menu-item" href="#nearest"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-pin" /></svg></span
+                            ><span>Your Nearest</span></a
+                        >
+                        <a class="menu-item" href="#eat"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-shop" /></svg></span
+                            ><span>Places To Eat</span></a
+                        >
+                        <a class="menu-item" href="#beforeyougo"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-suitcase" /></svg></span
+                            ><span>Before You Go</span></a
+                        >
+                        <a class="menu-item" href="#faq"
+                            ><span class="menu-ico"
+                                ><svg class="ico">
+                                    <use href="#i-qa" /></svg></span
+                            ><span>Q&amp;A</span></a
+                        >
+                    </div>
+                </nav>
+
+                <section class="host-block">
+                    <p class="section-eyebrow">Meet your host</p>
+                    <a
+                        class="host-card"
+                        href="#host"
+                        aria-label="Read more about your host, {{ host.name }}"
+                    >
+                        <span class="hc-avatar">
+                            <picture>
+                                <source type="image/webp" srcset="{{ host.photo.webp }}" />
+                                <img
+                                src="{{ host.photo.src }}"
+                                alt="{{ host.name }}, your host"
+                                loading="lazy"
+                            />
+                            </picture>
+                        </span>
+                        <span class="hc-name">{{ host.name }}</span>
+                        <span class="hc-role">{{ host.yearsHosting }}+ years hosting</span>
+                        <span class="hc-quote"
+                            >&ldquo;{{ host.quote }}&rdquo;</span
+                        >
+                        <span class="hc-cta"
+                            >Read his story
+                            <svg class="ico"><use href="#i-chevron" /></svg
+                        ></span>
+                    </a>
+                </section>
+
+                {{#if address.lat}}
+                <section class="map-block">
+                    <p class="section-eyebrow">{{#if labels.findUs}}{{ labels.findUs }}{{else}}Find us{{/if}}</p>
+                    <a
+                        class="map-card"
+                        href="{{ address._google }}"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Open {{ address.text }} in your maps app"
+                        data-map-link
+                        data-apple-href="{{ address._apple }}"
+                        data-google-href="{{ address._google }}"
+                    >
+                        <div
+                            class="map-card-frame"
+                            id="address-map"
+                            data-lat="{{ address.lat }}"
+                            data-lng="{{ address.lng }}"
+                            aria-hidden="true"
+                        ></div>
+                        <span class="map-card-overlay">
+                            <span class="map-card-addr"
+                                ><svg class="ico"><use href="#i-pin" /></svg>
+                                {{ address.text }}</span
+                            >
+                            <span
+                                class="map-card-cta"
+                                aria-hidden="true"
+                                ><svg class="ico"><use href="#i-chevron" /></svg
+                            ></span>
+                        </span>
+                    </a>
+                    <p class="map-attribution">
+                        Map tiles by
+                        <a
+                            href="https://carto.com/attributions"
+                            target="_blank"
+                            rel="noopener"
+                            >CARTO</a
+                        >
+                        ·
+                        <a
+                            href="https://www.openstreetmap.org/copyright"
+                            target="_blank"
+                            rel="noopener"
+                            >© OpenStreetMap</a
+                        >
+                        contributors
+                    </p>
+                </section>
+                {{/if}}
+
+                <footer class="home-footer">
+                    <p class="script home-footer-script">{{#if site.tagline}}{{ site.tagline }}{{else}}Enjoy your stay!{{/if}}</p>
+                    <div class="contact-row">
+                        <a class="contact-pill" href="tel:{{ host.phone }}"
+                            ><svg class="ico"><use href="#i-phone" /></svg>
+                            {{ host.phone }}</a
+                        >
+                        {{#if host.whatsapp}}
+                        <a
+                            class="contact-pill"
+                            href="https://wa.me/{{ host.whatsapp }}"
+                            target="_blank"
+                            rel="noopener"
+                            ><svg class="ico"><use href="#i-phone" /></svg>
+                            WhatsApp</a
+                        >
+                        {{/if}}
+                    </div>
+                    <p class="footer-addr">{{ address.full }}</p>
+                </footer>
+            </section>
+
+            <!-- ====================== HOST ====================== -->
+            <section class="screen" id="host" data-title="Your Host">
+                <div class="page">
+                    <p class="eyebrow center">Meet your host</p>
+                    <h1 class="page-title center">
+                        <span class="script script-lead">{{#if host.greeting}}{{ host.greeting }}{{else}}Hello,{{/if}}</span><br />I'm
+                        {{ host.name }}
+                    </h1>
+                    <div class="host-meta">
+                        <span class="host-meta-stats"
+                            ><b>{{ host.yearsHosting }}+</b> years hosting</span
+                        >
+                    </div>
+                    <picture>
+                        <source type="image/webp" srcset="{{ host.photo.webp }}" />
+                        <img
+                        class="rounded full-img"
+                        src="{{ host.photo.src }}"
+                        width="820"
+                        height="1092"
+                        alt="{{ host.name }}, your host"
+                        loading="lazy"
+                    />
+                    </picture>
+                    <blockquote class="quote">
+                        {{#each host.bio}}<p>{{ this }}</p>{{/each}}
+                    </blockquote>
+                    <div class="contact-stack">
+                        <a class="contact-line" href="tel:{{ host.phone }}"
+                            ><span class="ci"
+                                ><svg class="ico"><use href="#i-phone" /></svg
+                            ></span>
+                            {{ host.phone }}</a
+                        >
+                        {{#if host.whatsapp}}
+                        <a
+                            class="contact-line"
+                            href="https://wa.me/{{ host.whatsapp }}"
+                            target="_blank"
+                            rel="noopener"
+                            ><span class="ci"
+                                ><svg class="ico"><use href="#i-phone" /></svg
+                            ></span>
+                            Message on WhatsApp</a
+                        >
+                        {{/if}}
+                    </div>
+                    <p class="closing script">{{#if host.closing}}{{ host.closing }}{{else}}Enjoy your stay!{{/if}}</p>
+                </div>
+            </section>
+
+            <!-- ====================== CHECK IN / OUT ====================== -->
+            <section class="screen" id="checkin" data-title="Check In / Out">
+                <div class="page">
+                    <h1 class="page-title center">
+                        Check In <span class="amp">&amp;</span> Out
+                    </h1>
+                    <div class="io-grid">
+                        <div class="io-card">
+                            <span class="io-ico"
+                                ><svg class="ico"><use href="#i-arrive" /></svg
+                            ></span>
+                            <span class="io-label">Check in</span>
+                            <span class="io-when">from</span>
+                            <span class="io-time">{{ checkin.from }}</span>
+                        </div>
+                        <div class="io-card">
+                            <span class="io-ico"
+                                ><svg class="ico"><use href="#i-depart" /></svg
+                            ></span>
+                            <span class="io-label">Check out</span>
+                            <span class="io-when">by</span>
+                            <span class="io-time">{{ checkin.to }}</span>
+                        </div>
+                    </div>
+                    <ul class="info-list io-details">
+                        <li>
+                            <span class="li-ico"
+                                ><svg class="ico"><use href="#i-arrive" /></svg
+                            ></span>
+                            <div>
+                                <h3>Self check-in</h3>
+                                <p>
+                                    Please find the instructions to access Your
+                                    Apartment below.
+                                </p>
+                                <ul class="checklist io-checklist">
+                                    {{#each checkin.selfCheckin}}
+                                    <li>
+                                        <span class="cl-ico"
+                                            ><svg class="ico">
+                                                <use href="#i-check" /></svg
+                                        ></span>
+                                        {{ this }}
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                                <ul class="checklist io-checklist">
+                                    <li>
+                                        <span class="cl-ico"
+                                            ><svg class="ico">
+                                                <use href="#i-key" /></svg
+                                        ></span>
+                                        {{ checkin.unitName }} · key box code <b>{{ checkin.keyBoxCode }}</b>
+                                    </li>
+                                </ul>
+                                {{#if checkin.keyNote}}
+                                <p>
+                                    {{ checkin.keyNote }}
+                                </p>
+                                {{/if}}
+                            </div>
+                        </li>
+                        <li>
+                            <span class="li-ico"
+                                ><svg class="ico"><use href="#i-depart" /></svg
+                            ></span>
+                            <div>
+                                <h3>On departure</h3>
+                                <p>Before leaving the apartment, please:</p>
+                                <ul class="checklist io-checklist">
+                                    {{#each checkin.onDeparture}}
+                                    <li>
+                                        <span class="cl-ico"
+                                            ><svg class="ico">
+                                                <use href="#i-check" /></svg
+                                        ></span>
+                                        {{ this }}
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+
+                    {{#if checkin.goodToKnow}}
+                    <h2 class="sub">Good to know</h2>
+                    <ol class="tips">
+                        {{#each checkin.goodToKnow}}
+                        <li>
+                            <span class="num">0{{@number}}</span>
+                            <p>
+                                {{ this }}
+                            </p>
+                        </li>
+                        {{/each}}
+                    </ol>
+                    {{/if}}
+                </div>
+            </section>
+
+            <!-- ====================== WIFI ====================== -->
+            <section class="screen" id="wifi" data-title="Wifi">
+                <div class="page">
+                    <h1 class="page-title center">WiFi</h1>
+                    <p class="lead center">
+                        Scan to connect — or use the details below.
+                    </p>
+                    <div class="wifi-qr-card">
+                        <div
+                            id="wifi-qr"
+                            class="wifi-qr"
+                            role="img"
+                            aria-label="Wi-Fi QR code"
+                        ></div>
+                        <p class="wifi-qr-label">
+                            Point your camera here to join
+                        </p>
+                    </div>
+                    <div class="wifi-card">
+                        <div class="wifi-row">
+                            <span class="wifi-ico"
+                                ><svg class="ico"><use href="#i-wifi" /></svg
+                            ></span>
+                            <div>
+                                <p class="eyebrow">Network name</p>
+                                <p class="wifi-value">{{ wifi.ssid }}</p>
+                            </div>
+                        </div>
+                        <div class="hr"></div>
+                        <div class="wifi-row">
+                            <span class="wifi-ico"
+                                ><svg class="ico"><use href="#i-key" /></svg
+                            ></span>
+                            <div>
+                                <p class="eyebrow">Password</p>
+                                <p class="wifi-value" id="wifi-pass">
+                                    {{ wifi.password }}
+                                </p>
+                            </div>
+                            <button
+                                class="copy-btn"
+                                data-copy="{{ wifi.password }}"
+                                aria-label="Copy password"
+                            >
+                                <svg class="ico ico-copy">
+                                    <use href="#i-copy" />
+                                </svg>
+                                <svg class="ico ico-done">
+                                    <use href="#i-check" />
+                                </svg>
+                                <span class="copy-label">Copy</span>
+                            </button>
+                        </div>
+                    </div>
+                    {{#if wifi.note}}
+                    <p class="note center">
+                        {{ wifi.note }}
+                    </p>
+                    {{/if}}
+                </div>
+            </section>
+
+            <!-- ====================== HOUSE INFO ====================== -->
+            {{#if houseInfo}}
+            <section class="screen" id="houseinfo" data-title="House Info">
+                <div class="page">
+                    <h1 class="page-title center">House Info</h1>
+                    <ul class="info-list">
+                        {{#each houseInfo.items}}
+                        <li>
+                            <span class="li-ico"
+                                ><svg class="ico"><use href="#i-{{ icon }}" /></svg
+                            ></span>
+                            <div>
+                                <h3>{{ title }}</h3>
+                                <p>
+                                    {{ body }}
+                                </p>
+                                {{#if image}}
+                                <a
+                                    href="{{ image.src }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    aria-label="Open the {{ title }} image"
+                                    ><picture>
+    <source type="image/webp" srcset="{{ image.webp }}" />
+    <img
+                                        class="rounded full-img"
+                                        src="{{ image.src }}"
+                                        width="1049"
+                                        height="806"
+                                        alt="{{ title }}"
+                                        loading="lazy"
+                                />
+</picture></a>
+                                {{/if}}
+                                {{#if pdfUrl}}
+                                <a
+                                    class="inline-action"
+                                    href="{{ pdfUrl }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    ><svg class="ico">
+                                        <use href="#i-rules" />
+                                    </svg>
+                                    <span class="txt"
+                                        >{{ pdfText }}</span
+                                    ></a
+                                >
+                                {{/if}}
+                                {{#if linkUrl}}
+                                <a
+                                    class="inline-action"
+                                    href="{{ linkUrl }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    ><svg class="ico">
+                                        <use href="#i-pin" />
+                                    </svg>
+                                    <span class="txt"
+                                        >{{ linkText }}</span
+                                    ></a
+                                >
+                                {{/if}}
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== KITCHEN ====================== -->
+            {{#if kitchen}}
+            <section
+                class="screen"
+                id="kitchen"
+                data-title="Kitchen &amp; Other Areas"
+            >
+                <div class="page">
+                    <h1 class="page-title center">
+                        Kitchen <span class="amp">&amp;</span> Other Areas
+                    </h1>
+                    {{#if kitchen.image}}
+                    <picture>
+                        <source type="image/webp" srcset="{{ kitchen.image.webp }}" />
+                        <img
+                        class="rounded full-img"
+                        src="{{ kitchen.image.src }}"
+                        width="1100"
+                        height="733"
+                        alt="Modern kitchen with induction hob, oven and the signature red fridge"
+                        loading="lazy"
+                    />
+                    </picture>
+                    {{/if}}
+                    <p class="lead">{{ kitchen.lead }}</p>
+                    <p>
+                        {{ kitchen.intro }}
+                    </p>
+
+                    <h2 class="sub">In the kitchen</h2>
+                    <ul class="amenity-grid">
+                        {{#each kitchen.amenities}}
+                        <li>
+                            <span class="ck"
+                                ><svg class="ico"><use href="#i-check" /></svg
+                            ></span>
+                            {{ this }}
+                        </li>
+                        {{/each}}
+                    </ul>
+
+                    {{#if kitchen.coffeeNote}}
+                    <h2 class="sub">Coffee &amp; tea</h2>
+                    <p>
+                        {{ kitchen.coffeeNote }}
+                    </p>
+                    {{/if}}
+
+                    <a
+                        class="cta"
+                        href="https://wa.me/{{ host.whatsapp }}"
+                        target="_blank"
+                        rel="noopener"
+                        ><svg class="ico"><use href="#i-phone" /></svg> Send a
+                        message to {{ host.name }}</a
+                    >
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== HOUSE RULES ====================== -->
+            {{#if rules}}
+            <section class="screen" id="rules" data-title="House Rules">
+                <div class="page">
+                    <h1 class="page-title center">House Rules</h1>
+                    {{#if rules.images}}
+                    <div class="duo">
+                        {{#each rules.images}}
+                        <picture>
+                            <source type="image/webp" srcset="{{ webp }}" />
+                            <img
+                            class="rounded"
+                            src="{{ src }}"
+                            alt="{{ site.businessName }} — {{ site.unitLabel }}"
+                            loading="lazy"
+                        />
+                        </picture>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                    <ul class="rules">
+                        {{#each rules.list}}
+                        <li>{{ this }}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== EMERGENCY ====================== -->
+            {{#if emergency}}
+            <section class="screen" id="emergency" data-title="Emergency">
+                <div class="page">
+                    <h1 class="page-title center">Emergency Info</h1>
+                    <a class="emg-hero" href="tel:{{ emergency.euNumber }}">
+                        <span class="emg-hero-l">
+                            <span class="emg-hero-label"
+                                >Any emergency · call</span
+                            >
+                            <span class="emg-hero-num">{{ emergency.euNumber }}</span>
+                        </span>
+                        <span class="emg-hero-ico"
+                            ><svg class="ico"><use href="#i-phone" /></svg
+                        ></span>
+                    </a>
+                    <div class="emg-list">
+                        {{#each emergency.items}}
+                        <div class="emg">
+                            <span class="li-ico"
+                                ><svg class="ico"><use href="#i-{{ icon }}" /></svg
+                            ></span>
+                            <div>
+                                <h3>{{ title }}</h3>
+                                <a class="emg-tel" href="tel:{{ tel }}">{{ tel }}</a
+                                ><a
+                                    class="addr"
+                                    href="{{ placeUrl }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    ><svg class="ico pin">
+                                        <use href="#i-pin" />
+                                    </svg>
+                                    {{ place }}
+                                    <svg class="ico chev">
+                                        <use href="#i-chevron" /></svg
+                                ></a>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{#if emergency.firstAidNote}}
+                    <div class="callout">
+                        <span class="li-ico"
+                            ><svg class="ico"><use href="#i-aid" /></svg
+                        ></span>
+                        <div>
+                            <h3>First aid kit</h3>
+                            <p>
+                                {{ emergency.firstAidNote }}
+                            </p>
+                        </div>
+                    </div>
+                    {{/if}}
+                    {{#if emergency.poster}}
+                    <h2 class="sub">Reference</h2>
+                    <a
+                        href="{{ emergency.poster.src }}"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label="Open the 112 single emergency number reference poster"
+                        ><picture>
+    <source type="image/webp" srcset="{{ emergency.poster.webp }}" />
+    <img
+                            class="rounded full-img"
+                            src="{{ emergency.poster.src }}"
+                            width="1047"
+                            height="1503"
+                            alt="The Single Emergency Number 112 — Ministry of the Interior reference poster"
+                            loading="lazy"
+                    />
+</picture></a>
+                    {{/if}}
+                    {{#if emergency.posterNote}}
+                    <p class="note center">
+                        {{ emergency.posterNote }}
+                        {{#if emergency.posterUrl}}
+                        <a
+                            href="{{ emergency.posterUrl }}"
+                            target="_blank"
+                            rel="noopener"
+                            >112.gov.it</a
+                        >
+                        {{/if}}
+                    </p>
+                    {{/if}}
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== TRANSPORT ====================== -->
+            {{#if transport}}
+            <section class="screen" id="transport" data-title="Transportation">
+                <div class="page">
+                    <h1 class="page-title center">Getting Around</h1>
+                    <ul class="info-list">
+                        {{#each transport.items}}
+                        <li>
+                            <span class="li-ico"
+                                ><svg class="ico"><use href="#i-{{ icon }}" /></svg
+                            ></span>
+                            <div>
+                                <h3>{{ title }}</h3>
+                                <p>
+                                    {{ desc }}
+                                </p>
+                                {{#if linkUrl}}
+                                <a
+                                    class="inline-action"
+                                    href="{{ linkUrl }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    ><svg class="ico">
+                                        <use href="#i-pin" />
+                                    </svg>
+                                    <span class="txt">{{ linkText }}</span></a
+                                >
+                                {{/if}}
+                            </div>
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== THINGS TO DO ====================== -->
+            {{#if thingsToDo}}
+            <section class="screen" id="thingstodo" data-title="Things to do">
+                <div class="page">
+                    <h1 class="page-title center">Things to Do</h1>
+                    <nav class="sec-nav" aria-label="Jump to section">
+                        {{#each thingsToDo.groups}}
+                        <button
+                            class="sec-chip{{#if @first}} is-active{{/if}}"
+                            type="button"
+                            data-scroll-to="{{ id }}"
+                        >
+                            {{ label }}
+                        </button>
+                        {{/each}}
+                    </nav>
+                    {{#each thingsToDo.groups}}
+                    <div class="ttd-sec" id="{{ id }}">
+                        <h2 class="sub">{{ title }}</h2>
+                        <div class="stack-cards">
+                            {{#each items}}
+                            <div class="tcard"{{#if featured}} data-featured{{/if}}>
+                                {{#if image}}
+                                <picture>
+                                    <source type="image/webp" srcset="{{ image.webp }}" />
+                                    <img
+                                    class="tcard-img"
+                                    src="{{ image.src }}"
+                                    width="600"
+                                    height="375"
+                                    alt="{{ title }}"
+                                    loading="lazy"
+                                />
+                                </picture>
+                                {{/if}}
+                                <div class="tcard-body">
+                                    <span class="tcard-cat"
+                                        >{{#if featured}}★ {{/if}}{{ category }}</span
+                                    >
+                                    <h3>{{ title }}</h3>
+                                    <p>
+                                        {{ desc }}
+                                    </p>
+                                    {{#if mapUrl}}
+                                    <a
+                                        class="inline-action"
+                                        href="{{ mapUrl }}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        ><svg class="ico">
+                                            <use href="#i-pin" />
+                                        </svg>
+                                        <span class="txt">View on map</span></a
+                                    >
+                                    {{/if}}
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== PLACES TO EAT ====================== -->
+            {{#if eat}}
+            <section class="screen" id="eat" data-title="Places To Eat">
+                <div class="page">
+                    <h1 class="page-title center">Places to Eat</h1>
+                    <p class="lead center">
+                        A few of {{ host.name }}'s favourites. Tap any spot for
+                        directions.
+                    </p>
+
+                    <div class="near-list">
+                        {{#each eat}}
+                        <a
+                            class="near-card"
+                            href="{{ linkUrl }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <span class="near-head"
+                                ><span class="near-ico"
+                                    ><svg class="ico">
+                                        <use href="#i-fork" /></svg></span
+                                ><span class="near-info"
+                                    ><span class="near-cat"
+                                        >{{ category }}</span
+                                    ><span class="near-name"
+                                        >{{ title }}</span
+                                    ></span
+                                ></span
+                            >
+                            <span class="near-desc"
+                                >{{ desc }}</span
+                            >
+                            <span class="near-dir"
+                                ><span class="near-dir-l"
+                                    ><svg class="ico">
+                                        <use href="#i-pin" />
+                                    </svg>
+                                    View on map</span
+                                ><svg class="ico"><use href="#i-chevron" /></svg
+                            ></span>
+                        </a>
+                        {{/each}}
+                    </div>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== YOUR NEAREST ====================== -->
+            {{#if nearest}}
+            <section class="screen" id="nearest" data-title="Your Nearest">
+                <div class="page">
+                    <h1 class="page-title center">Your Nearest</h1>
+                    <p class="lead center">
+                        The essentials, all within a short distance. Tap a card
+                        for directions.
+                    </p>
+                    <div class="near-list">
+                        {{#each nearest}}
+                        <a
+                            class="near-card"
+                            href="{{ linkUrl }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            <span class="near-head">
+                                <span class="near-ico"
+                                    ><svg class="ico">
+                                        <use href="#i-{{ icon }}" /></svg
+                                ></span>
+                                <span class="near-info"
+                                    ><span class="near-cat"
+                                        >{{ category }}</span
+                                    ><span class="near-name"
+                                        >{{ title }}</span
+                                    ></span
+                                >
+                            </span>
+                            <span class="near-desc"
+                                >{{ desc }}</span
+                            >
+                            <span class="near-dir"
+                                ><span class="near-dir-l"
+                                    ><svg class="ico">
+                                        <use href="#i-pin" />
+                                    </svg>
+                                    {{#if linkText}}{{ linkText }}{{else}}Get directions{{/if}}</span
+                                ><svg class="ico"><use href="#i-chevron" /></svg
+                            ></span>
+                        </a>
+                        {{/each}}
+                    </div>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== BEFORE YOU GO ====================== -->
+            {{#if beforeYouGo}}
+            <section class="screen" id="beforeyougo" data-title="Before You Go">
+                <div class="page">
+                    <h1 class="page-title center">Before You Go</h1>
+
+                    <h2 class="sub">When you check out</h2>
+                    <ul class="checklist">
+                        {{#each beforeYouGo.items}}
+                        <li>
+                            <span class="cl-ico"
+                                ><svg class="ico"><use href="#i-check" /></svg
+                            ></span>
+                            {{ this }}
+                        </li>
+                        {{/each}}
+                    </ul>
+
+                    <p class="closing script">
+                        Safe travels — and come back soon!
+                    </p>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== FAQ ====================== -->
+            {{#if faq}}
+            <section class="screen" id="faq" data-title="Q&amp;A">
+                <div class="page">
+                    <h1 class="page-title center">Q&amp;A</h1>
+                    <div class="accordion">
+                        {{#each faq.items}}
+                        <details>
+                            <summary>
+                                {{ q }}<svg
+                                    class="ico chev"
+                                >
+                                    <use href="#i-chevron" />
+                                </svg>
+                            </summary>
+                            <p>
+                                {{ a }}
+                            </p>
+                        </details>
+                        {{/each}}
+                    </div>
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- ====================== REVIEWS ====================== -->
+            {{#if reviews}}
+            <section class="screen" id="reviews" data-title="Guest Reviews">
+                <div class="page">
+                    <h1 class="page-title center">Guest Reviews</h1>
+                    <picture>
+                        <source type="image/webp" srcset="assets/img/apt-terrace.webp" />
+                        <img
+                        class="rounded full-img"
+                        src="assets/img/apt-terrace.jpg"
+                        width="1200"
+                        height="897"
+                        alt="The terrace at golden hour"
+                        loading="lazy"
+                    />
+                    </picture>
+                    {{#if reviews.intro}}
+                    <p class="lead center">{{ reviews.intro }}</p>
+                    {{/if}}
+                    {{#each reviews.items}}
+                    <div class="review">
+                        <span class="score"
+                            ><svg class="ico ico--fill">
+                                <use href="#i-star" />
+                            </svg>
+                            {{ stars }}/10</span
+                        >
+                        <p>
+                            "{{ text }}"
+                        </p>
+                        {{#if author}}
+                        <p>— {{ author }}</p>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                    <p class="note center">
+                        If you enjoyed your stay, please let us know by leaving
+                        a review on Booking or Airbnb.
+                    </p>
+                    {{#if reviews.closing}}
+                    <p class="closing script">{{ reviews.closing }}</p>
+                    {{/if}}
+                </div>
+            </section>
+            {{/if}}
+        </div>
+
+        <!-- Photo gallery (opened from the home collage) -->
+        <dialog
+            id="gallery"
+            class="gallery-modal"
+            aria-label="Apartment photo gallery"
+        >
+            <header class="gallery-bar">
+                <button
+                    type="button"
+                    class="gallery-close"
+                    aria-label="Close gallery"
+                >
+                    <svg class="ico"><use href="#i-x" /></svg>
+                </button>
+                <span class="gallery-counter">1 / {{ galleryCount }}</span>
+                <span class="gallery-spacer"></span>
+            </header>
+            <div class="gallery-list">
+                {{#each gallery}}
+                <picture class="gallery-item">
+                    <source
+                        type="image/webp"
+                        srcset="{{ webp }}"
+                    />
+                    <img
+                        src="{{ src }}"
+                        alt="Apartment photo {{ n }} of {{ total }} — {{ alt }}"
+                        loading="lazy"
+                    />
+                </picture>
+                {{/each}}
+            </div>
+        </dialog>
+
+        <script src="assets/js/qrcode.min.js"></script>
+        <script
+            src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""
+            defer
+        ></script>
+        <script src="assets/js/app.js?v=27" defer></script>
+    </body>
+</html>
