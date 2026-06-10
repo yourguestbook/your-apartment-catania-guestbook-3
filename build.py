@@ -343,6 +343,10 @@ def normalize(content):
     if kitchen and kitchen.get("image"):
         kitchen["image"] = track(_imgref(kitchen["image"]))
 
+    exc = content.get("excursion")
+    if exc and exc.get("image"):
+        exc["image"] = track(_imgref(exc["image"]))
+
     rules = content.get("rules")
     if rules and rules.get("images"):
         rules["images"] = [track(_imgref(x)) for x in rules["images"]]
