@@ -547,14 +547,20 @@ def main(argv):
 
     (out_dir / "index.html").write_text(rendered, encoding="utf-8")
 
+    # GitHub Pages: disabilita Jekyll (serve i file as-is, inclusi quelli con "_" iniziale)
+    (out_dir / ".nojekyll").write_text("", encoding="utf-8")
+
     # CSS: stile (tema) + brand override
     style = (TEMPLATE_DIR / "assets/css/style.css").read_text(encoding="utf-8")
     theme = content.get("site", {}).get("theme", "auto")
     (out_dir / "assets/css/style.css").write_text(themed_style_css(style, theme), encoding="utf-8")
     (out_dir / "assets/css/brand.css").write_text(brand_css(content.get("brand", {}), theme), encoding="utf-8")
 
-    # JS generico (legge window.GUESTBOOK)
-    shutil.copy2(TEMPLATE_DIR / "assets/js/app.js", out_dir / "assets/js/app.js")
+    # JS: app.js (legge window.GUESTBOOK) + librerie locali (es. qrcode.min.js per il QR Wi-Fi)
+    for fn in os.listdir(TEMPLATE_DIR / "assets/js"):
+        p = TEMPLATE_DIR / "assets/js" / fn
+        if p.is_file():
+            shutil.copy2(p, out_dir / "assets/js" / fn)
 
     # asset fissi del brand (logo, favicon, og)
     for fn in os.listdir(TEMPLATE_DIR / "assets/img"):

@@ -14,3 +14,6 @@ __pycache__/
 
 # Tooling locale (anteprima dev / agent) — non fa parte del sito pubblicato
 .claude/
+
+# QR dell'URL pubblico (artefatto rigenerabile, da consegnare al cliente)
+qr-*.png
