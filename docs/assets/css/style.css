@@ -1569,6 +1569,95 @@ picture > source {
     }
 }
 
+/* Your Nearest — featured promo / referral card (image on top + primary CTA) */
+.near-promo {
+    padding: 0;
+    overflow: hidden;
+    border-color: var(--line-2);
+    box-shadow:
+        0 8px 26px rgba(60, 48, 30, 0.12),
+        0 1px 2px rgba(60, 48, 30, 0.05);
+}
+.near-promo-media {
+    position: relative;
+    display: block;
+}
+.near-promo-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    background: var(--cream);
+}
+.near-promo-video {
+    /* decorative autoplay loop: taps fall through to the card's referral link */
+    pointer-events: none;
+    background: #0f0b07;
+}
+.near-promo-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 5px 12px;
+    background: rgba(20, 16, 11, 0.86);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: var(--radius-pill);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #f1ead9;
+}
+.near-promo-body {
+    display: block;
+    padding: 16px 18px 18px;
+}
+.near-promo-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 7px;
+}
+.near-promo-desc {
+    display: block;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-bottom: 15px;
+}
+.near-promo-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 16px;
+    border-radius: var(--radius-md);
+    background: var(--brand-primary);
+    color: var(--brand-on-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.near-promo-cta .ico {
+    width: 17px;
+    height: 17px;
+}
+@media (hover: hover) {
+    .near-promo:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 14px 30px rgba(60, 48, 30, 0.16),
+            0 1px 2px rgba(60, 48, 30, 0.06);
+    }
+    .near-promo:hover .near-promo-cta {
+        opacity: 0.93;
+    }
+}
+
 /* tips */
 .tips {
     list-style: none;
