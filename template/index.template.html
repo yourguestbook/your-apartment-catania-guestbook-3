@@ -368,6 +368,7 @@
                                     </li>
                                     {{/each}}
                                 </ul>
+                                {{#if checkin.keyBoxCode}}
                                 <ul class="checklist io-checklist">
                                     <li>
                                         <span class="cl-ico"
@@ -377,6 +378,7 @@
                                         {{ checkin.unitName }} · key box code <b>{{ checkin.keyBoxCode }}</b>
                                     </li>
                                 </ul>
+                                {{/if}}
                                 {{#if checkin.keyNote}}
                                 <p>
                                     {{ checkin.keyNote }}

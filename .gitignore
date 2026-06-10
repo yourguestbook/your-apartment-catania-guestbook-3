@@ -4,6 +4,10 @@ dist/
 # File dati del singolo cliente (si parte da content.example.json)
 content.json
 
+# Esempio della factory: contiene i DATI REALI di Stefano (key-box, Wi-Fi, telefono) —
+# NON va in un repo cliente pubblico. Resta nella factory di origine.
+content.example.json
+
 # macOS / editor
 .DS_Store
 *.swp
