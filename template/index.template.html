@@ -792,6 +792,31 @@
                         <h2 class="sub">{{ title }}</h2>
                         <div class="stack-cards">
                             {{#each items}}
+                            {{#if promo}}
+                            <a class="promo-card" href="{{ linkUrl }}" target="_blank" rel="noopener">
+                                {{#if image}}
+                                <span class="promo-card-media">
+                                    {{#if video}}
+                                    <video class="promo-card-img promo-card-video" autoplay muted loop playsinline preload="metadata" poster="{{ image.src }}">
+                                        <source src="{{ video.mp4 }}" type="video/mp4" />
+                                        {{#if video.ogv}}<source src="{{ video.ogv }}" type="video/ogg" />{{/if}}
+                                    </video>
+                                    {{else}}
+                                    <picture>
+                                        <source type="image/webp" srcset="{{ image.webp }}" />
+                                        <img class="promo-card-img" src="{{ image.src }}" width="600" height="338" alt="{{ title }}" loading="lazy" />
+                                    </picture>
+                                    {{/if}}
+                                    {{#if category}}<span class="promo-card-tag">{{ category }}</span>{{/if}}
+                                </span>
+                                {{/if}}
+                                <span class="promo-card-body">
+                                    <span class="promo-card-title">{{ title }}</span>
+                                    <span class="promo-card-desc">{{ desc }}</span>
+                                    <span class="promo-card-cta">{{#if ctaLabel}}{{ ctaLabel }}{{else}}Discover more{{/if}} <svg class="ico"><use href="#i-chevron" /></svg></span>
+                                </span>
+                            </a>
+                            {{else}}
                             <div class="tcard"{{#if featured}} data-featured{{/if}}>
                                 {{#if image}}
                                 <picture>
@@ -828,6 +853,7 @@
                                     {{/if}}
                                 </div>
                             </div>
+                            {{/if}}
                             {{/each}}
                         </div>
                     </div>
@@ -895,31 +921,6 @@
                     </p>
                     <div class="near-list">
                         {{#each nearest}}
-                        {{#if featured}}
-                        <a class="near-card near-promo" href="{{ linkUrl }}" target="_blank" rel="noopener">
-                            {{#if image}}
-                            <span class="near-promo-media">
-                                {{#if video}}
-                                <video class="near-promo-img near-promo-video" autoplay muted loop playsinline preload="metadata" poster="{{ image.src }}">
-                                    <source src="{{ video.mp4 }}" type="video/mp4" />
-                                    {{#if video.ogv}}<source src="{{ video.ogv }}" type="video/ogg" />{{/if}}
-                                </video>
-                                {{else}}
-                                <picture>
-                                    <source type="image/webp" srcset="{{ image.webp }}" />
-                                    <img class="near-promo-img" src="{{ image.src }}" width="600" height="338" alt="{{ title }}" loading="lazy" />
-                                </picture>
-                                {{/if}}
-                                {{#if category}}<span class="near-promo-tag">{{ category }}</span>{{/if}}
-                            </span>
-                            {{/if}}
-                            <span class="near-promo-body">
-                                <span class="near-promo-title">{{ title }}</span>
-                                <span class="near-promo-desc">{{ desc }}</span>
-                                <span class="near-promo-cta">{{#if ctaLabel}}{{ ctaLabel }}{{else}}Discover more{{/if}} <svg class="ico"><use href="#i-chevron" /></svg></span>
-                            </span>
-                        </a>
-                        {{else}}
                         <a
                             class="near-card"
                             href="{{ linkUrl }}"
@@ -951,7 +952,6 @@
                                 ><svg class="ico"><use href="#i-chevron" /></svg
                             ></span>
                         </a>
-                        {{/if}}
                         {{/each}}
                     </div>
                 </div>
